@@ -150,7 +150,7 @@ def load_xvg():															#DONE
 		#check that each file has the same number of data rows
 		if f_index == 0:
 			nb_rows = np.shape(tmp_data)[0]
-			distance = np.zeros((nb_rows, 1))								#distance from cluster
+			distances = np.zeros((nb_rows, 1))								#distance from cluster
 			data_ions = np.zeros((nb_rows, len(args.xvgfilenames)))			#ion charges density
 			data_peptide = np.zeros((nb_rows, len(args.xvgfilenames)))		#peptide charges density
 			data_lipids = np.zeros((nb_rows, len(args.xvgfilenames)))		#lipids charges density
@@ -168,9 +168,9 @@ def load_xvg():															#DONE
 				sys.exit(1)
 		#check that each file has the same first column
 		if f_index == 0:
-			distance[:,0] = tmp_data[:,0]
+			distances[:,0] = tmp_data[:,0]
 		else:
-			if not np.array_equal(tmp_data[:,0],distance[:,0]):
+			if not np.array_equal(tmp_data[:,0],distances[:,0]):
 				print "\nError: the first column of file " + str(filename) + " is different than that of " + str(args.xvgfilenames[0]) + "."
 				sys.exit(1)
 		
@@ -225,9 +225,9 @@ def calculate_avg():													#DONE
 			if np.isnan(data_ions[r,f_index]):
 				tmp_weights_nan[r,f_index] = 0
 				nb_files_ions[r,0] -= 1
-	weights_ions[:,0] = np.nansum(tmp_weights_nan, axis = 1)
-	weights_ions_sq[:,0] = np.nansum(tmp_weights_nan**2, axis = 1)	
-	weights_ions[weights_ions_nan == 0] = 1
+	weights_ions_nan[:,0] = np.nansum(tmp_weights_nan, axis = 1)
+	weights_ions_nan_sq[:,0] = np.nansum(tmp_weights_nan**2, axis = 1)	
+	weights_ions_nan[weights_ions_nan == 0] = 1
 	
 	#peptide
 	weights_peptide_nan = np.zeros((nb_rows, 1))	
@@ -240,9 +240,9 @@ def calculate_avg():													#DONE
 			if np.isnan(data_peptide[r,f_index]):
 				tmp_weights_nan[r,f_index] = 0
 				nb_files_peptide[r,0] -= 1
-	weights_peptide[:,0] = np.nansum(tmp_weights_nan, axis = 1)
-	weights_peptide_sq[:,0] = np.nansum(tmp_weights_nan**2, axis = 1)	
-	weights_peptide[weights_peptide_nan == 0] = 1
+	weights_peptide_nan[:,0] = np.nansum(tmp_weights_nan, axis = 1)
+	weights_peptide_nan_sq[:,0] = np.nansum(tmp_weights_nan**2, axis = 1)	
+	weights_peptide_nan[weights_peptide_nan == 0] = 1
 
 	#lipids
 	weights_lipids_nan = np.zeros((nb_rows, 1))	
@@ -255,9 +255,9 @@ def calculate_avg():													#DONE
 			if np.isnan(data_lipids[r,f_index]):
 				tmp_weights_nan[r,f_index] = 0
 				nb_files_lipids[r,0] -= 1
-	weights_lipids[:,0] = np.nansum(tmp_weights_nan, axis = 1)
-	weights_lipids_sq[:,0] = np.nansum(tmp_weights_nan**2, axis = 1)	
-	weights_lipids[weights_lipids_nan == 0] = 1
+	weights_lipids_nan[:,0] = np.nansum(tmp_weights_nan, axis = 1)
+	weights_lipids_nan_sq[:,0] = np.nansum(tmp_weights_nan**2, axis = 1)	
+	weights_lipids_nan[weights_lipids_nan == 0] = 1
 
 	#total
 	weights_total_nan = np.zeros((nb_rows, 1))	
@@ -270,9 +270,9 @@ def calculate_avg():													#DONE
 			if np.isnan(data_total[r,f_index]):
 				tmp_weights_nan[r,f_index] = 0
 				nb_files_total[r,0] -= 1
-	weights_total[:,0] = np.nansum(tmp_weights_nan, axis = 1)
-	weights_total_sq[:,0] = np.nansum(tmp_weights_nan**2, axis = 1)	
-	weights_total[weights_total_nan == 0] = 1
+	weights_total_nan[:,0] = np.nansum(tmp_weights_nan, axis = 1)
+	weights_total_nan_sq[:,0] = np.nansum(tmp_weights_nan**2, axis = 1)	
+	weights_total_nan[weights_total_nan == 0] = 1
 
 	#calculate weighted average taking into account "nan"
 	#----------------------------------------------------
@@ -351,8 +351,8 @@ def write_xvg():														#DONE
 
 	#data
 	for r in range(0, nb_rows):
-		results = str(distance[r,0])
-		results += "	" + "{:.6e}".format(avg_charge_ions[r,0]) + "	" + "{:.6e}".format(avg_charge_peptide[r,0]) + "	" + "{:.6e}".format(avg_avg_charge_lipids[r,0]) + "	" + "{:.6e}".format(avg_avg_charge_total[r,0]) + "	" + "{:.6e}".format(std_charge_ions[r,0]) + "	" + "{:.6e}".format(std_charge_peptide[r,0]) + "	" + "{:.6e}".format(std_charge_lipids[r,0]) + "	" + "{:.6e}".format(std_charge_total[r,0])
+		results = str(distances[r,0])
+		results += "	" + "{:.6e}".format(avg_charge_ions[r,0]) + "	" + "{:.6e}".format(avg_charge_peptide[r,0]) + "	" + "{:.6e}".format(avg_charge_lipids[r,0]) + "	" + "{:.6e}".format(avg_charge_total[r,0]) + "	" + "{:.6e}".format(std_charge_ions[r,0]) + "	" + "{:.6e}".format(std_charge_peptide[r,0]) + "	" + "{:.6e}".format(std_charge_lipids[r,0]) + "	" + "{:.6e}".format(std_charge_total[r,0])
 		output_xvg.write(results + "\n")		
 	output_xvg.close()	
 	
